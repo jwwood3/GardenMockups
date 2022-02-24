@@ -58,6 +58,8 @@ let constructQueryString = function(){
 	return queryString;
 }
 
+
+
 document.addEventListener("DOMContentLoaded", function() {
 	viewModel = new ViewModel();
 	map1 = viewModel.createMap("map1");
@@ -187,6 +189,14 @@ document.addEventListener("DOMContentLoaded", function() {
 						}
 						viewModel.syncMaps(map2,map1);
 					});
+					let KEY = document.getElementById("key1");
+					while(KEY.children.length>1){
+						KEY.lastChild.remove();
+					}
+					let LEG = document.getElementById("legend1");
+					while(LEG.children.length>0){
+						LEG.firstChild.remove();
+					}
 				}
 			} else {
 				newMaps = viewModel.closeQueryPanel(2,map1,map2);
@@ -200,6 +210,14 @@ document.addEventListener("DOMContentLoaded", function() {
 						}
 						viewModel.syncMaps(map1,map2);
 					});
+					let KEY = document.getElementById("key2");
+					while(KEY.children.length>1){
+						KEY.lastChild.remove();
+					}
+					let LEG = document.getElementById("legend2");
+					while(LEG.children.length>0){
+						LEG.firstChild.remove();
+					}
 				}
 				
 			}
@@ -246,6 +264,24 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 			map1.invalidateSize();
 			map2.invalidateSize();
+		});
+	}
+	
+	for( const el of document.getElementsByClassName("legendLabel")){
+		el.addEventListener('click', (event) => {
+			if(event.target.innerHTML==viewModel.model.LANG.LEGENDLABEL+": &gt;&gt;"){
+				event.target.innerHTML=viewModel.model.LANG.LEGENDLABEL+": <<";
+				event.target.parentNode.parentNode.classList.add("open");
+			}
+			else {
+				event.target.innerHTML=viewModel.model.LANG.LEGENDLABEL+": >>";
+				event.target.parentNode.parentNode.classList.remove("open");
+			}
+		});
+		el.addEventListener('dblclick', (event) => {
+			console.log("double clicked");
+			event.stopImmediatePropagation();
+			event.preventDefault();
 		});
 	}
 
@@ -322,6 +358,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		for(s of document.getElementsByClassName("selectButton")){
 			s.innerHTML = viewModel.model.LANG.SELECT_DATA;
 		}
+		for(s of document.getElementsByClassName("legendLabel")){
+			s.innerHTML = viewModel.model.LANG.LEGENDLABEL+": >>";
+		}
 		document.getElementById("search1").innerHTML = viewModel.model.LANG.SEARCH;
 		document.getElementById("search2").innerHTML = viewModel.model.LANG.SEARCH;
 		document.title = viewModel.model.LANG.TITLE;
@@ -348,10 +387,11 @@ document.addEventListener("DOMContentLoaded", function() {
 		viewModel.model.hasChanged[1] = true;
 		map2.setView({lat: viewModel.queryFlags["lat2"], lng: viewModel.queryFlags["lng2"]},viewModel.queryFlags["zoom2"]);
 	}
-	// initial background DB query
-	viewModel.fetchVariable("map1", " (cadmium)");
+	
 	document.getElementById('tempElement').addEventListener('fetched',(event) => { // This fires once variables are fetched in viewModel constructor
 		console.log("Data successfully fetched");
+		// initial background DB query
+		viewModel.fetchVariable("map1", " (cadmium)"); // I moved this in here to occur only after the variables have been fetched. Otherwise it seems to fail - JW
 		if("map1" in viewModel.queryFlags){// need to wait until fetch variables is done
 			document.getElementById("searchBar1").value = viewModel.queryFlags["map1"];
 			viewModel.changeToLoad(document.getElementById("search1"));
@@ -373,4 +413,24 @@ document.addEventListener("DOMContentLoaded", function() {
 				viewModel.updateDetails(2));
 		}
 	});
+
+var centerDragHandler = d3.drag()
+    .on('drag', centerDragged)
+	.on('end', function(){map1.invalidateSize();map2.invalidateSize()})
+
+
+var d3Center = d3.select("#spacerDiv")
+
+centerDragHandler(d3Center);
+
+
+function centerDragged() {
+	var x = d3.event.x
+	if(x<0){x=0}else if(x>viewModel.screenWidth){x=viewModel.screenWidth}
+	document.getElementById("left").style.flexGrow=x/viewModel.screenWidth
+	document.getElementById("left").style.flexShrink=x/viewModel.screenWidth
+	document.getElementById("right").style.flexGrow=(viewModel.screenWidth-x)/viewModel.screenWidth
+	document.getElementById("right").style.flexShrink=(viewModel.screenWidth-x)/viewModel.screenWidth
+	console.log(d3.event.x+", "+d3.event.y)
+}
 });

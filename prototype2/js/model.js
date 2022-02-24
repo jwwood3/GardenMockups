@@ -17,7 +17,8 @@ let LANG_en = {
 	'VARIABLE_SEARCH': 'Search for a Variable',
 	'ADDRESS_SEARCH': 'Type an Address',
 	'Download_Data': 'Download Data',
-	'COPYLINK': 'Copy Link'
+	'COPYLINK': 'Copy Link',
+	'LEGENDLABEL': 'Legend'
 };
 
 let LANG_pig = {
@@ -39,7 +40,8 @@ let LANG_pig = {
 	'VARIABLE_SEARCH': 'earchsay orfay ayay ariablevay',
 	'ADDRESS_SEARCH': 'etypay anyay addressyay',
 	'Download_Data': 'ownloadday ataday',
-	'COPYLINK': 'opycay inklay'
+	'COPYLINK': 'opycay inklay',
+	'LEGENDLABEL': 'egendlay'
 };
 
 let LANGS = {'en':LANG_en, 'pig':LANG_pig};

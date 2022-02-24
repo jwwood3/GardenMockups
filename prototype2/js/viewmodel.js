@@ -21,6 +21,7 @@ class ViewModel {
             console.log(error);
             alert("Variables Were Not Loaded from Scrutinizer");
         }
+        this.screenWidth = document.getElementById("sectionContainer").getBoundingClientRect().width
     }
 
 
@@ -289,17 +290,49 @@ class ViewModel {
         let tractData = this.model.getTractData(key);
         let colorMapping = this.model.getColorMapping(colors, key);
         var maxCount = 0;
-
+		let cutoffs = {};
         for (let tractId in tractData) {
-            let color = colorMapping(tractData[tractId][0] / tractData[tractId][1]);
+			let num = tractData[tractId][0] / tractData[tractId][1];
+			let num2 = tractData[tractId][0];
+            let color = colorMapping(num);
+			if(color in cutoffs){
+				if(num2<cutoffs[color][0]){
+					cutoffs[color][0] = num2;
+				}
+				if(num2>cutoffs[color][1]){
+					cutoffs[color][1] = num2;
+				}
+			} else {
+				//cutoffs[color] = [tractData[tractId][0] / tractData[tractId][1],tractData[tractId][0] / tractData[tractId][1]];
+				cutoffs[color] = [tractData[tractId][0],tractData[tractId][0]];
+			}
             counts[color] += 1;
             if (maxCount < counts[color])
                 maxCount = counts[color];
         }
-
+		while(legend.parentNode.children[0].children.length>1){
+			legend.parentNode.children[0].lastChild.remove();
+		}
         var convertHeight = (count) => (count / maxCount) * legendHeight;
         let width = (legendWidth - 20) / 8;
         for (var i = 0; i < colors.length; i++) {
+			if(colors[i] in cutoffs){
+				let lEntry = document.createElement("div");
+				lEntry.className = "legendEntry";
+				let colorSquare = document.createElement("div");
+				colorSquare.style.width = width+"px";
+				colorSquare.style.height = width+"px";
+				colorSquare.style.background = colors[i];
+				colorSquare.className = "colorSquare";
+				let lLabel = document.createElement("span");
+				lLabel.className = "legendText";
+				let lowerBound = +(Math.round( cutoffs[colors[i]][0].toString() + "e+2")  + "e-2"); // round cutoff to 2 decimal places
+				let upperBound = +(Math.round( cutoffs[colors[i]][1].toString() + "e+2")  + "e-2"); // round cutoff to 2 decimal places
+				lLabel.innerHTML = lowerBound+" - "+upperBound;
+				lEntry.appendChild(colorSquare);
+				lEntry.appendChild(lLabel);
+				legend.parentNode.children[0].appendChild(lEntry);
+			}
             let div = document.createElement("div");
             div.style.width = width + "px";
             div.style.height = (counts[colors[i]] / maxCount) * legendHeight + "px";
@@ -427,7 +460,8 @@ class ViewModel {
                     infoBox.update();
                 }
                 let zoomToFeature = this._zoomToFeature(map);
-                let onEachFeature = this._onEachFeature(highlightFeature, resetHighlight, zoomToFeature);
+				let openTileInfo = this._openTileInfo(map);
+                let onEachFeature = this._onEachFeature(highlightFeature, resetHighlight, zoomToFeature,openTileInfo);
                 geojson = L.geoJson(censusBlockData, { style: style, onEachFeature: onEachFeature }).addTo(map);
                 this.model.setGeoJson(key, geojson);
 
@@ -504,6 +538,7 @@ class ViewModel {
 				sizedElements[i].classList.add("singleMap");
 			}
 		}
+        this.screenWidth = document.getElementById("sectionContainer").getBoundingClientRect().width
 	}
 	
 	/**
@@ -589,6 +624,11 @@ class ViewModel {
 			let center;
 			let zoom;
 			if(side==1){
+				let newDownload = document.createElement("img");
+				newDownload.setAttribute("id","DownloadButton1");
+				newDownload.setAttribute("class","DownloadButton");
+				newDownload.setAttribute("src","DownloadIcon.png");
+				document.getElementById("DownloadContainer1").appendChild(newDownload);
 				center = map1.getCenter();
 				zoom = map1.getZoom();
 				map1.remove();
@@ -596,6 +636,11 @@ class ViewModel {
 				retObj["box1"] = this.createInfoBox(retObj["map1"]);
 				retObj["map1"].setView({lat: center.lat, lng: center.lng},zoom,{animate: false});
 			} else {
+				let newDownload = document.createElement("img");
+				newDownload.setAttribute("id","DownloadButton2");
+				newDownload.setAttribute("class","DownloadButton");
+				newDownload.setAttribute("src","DownloadIcon.png");
+				document.getElementById("DownloadContainer2").appendChild(newDownload);
 				center = map2.getCenter();
 				zoom = map2.getZoom();
 				map2.remove();
@@ -657,7 +702,9 @@ class ViewModel {
 	
 	createInfoPanel(parentDivId){
 		for(s of document.getElementsByClassName("infoPanel")){
-			s.remove();
+			if(s.parentNode.id==parentDivId){
+				s.remove();
+			}
 		}
 		let pan = document.createElement("div");
 		pan.className = "infoPanel";
@@ -739,13 +786,25 @@ class ViewModel {
             });
         }
     }
+	
+	_openTileInfo(map) {
+		let temp=this;
+		return function (e) {
+			let newPanel=temp.createInfoPanel(map._container.parentNode.id);
+		}
+	}
 
-    _onEachFeature(highlightFeature, resetHighlight, zoomToFeature) {
+    _onEachFeature(highlightFeature, resetHighlight, zoomToFeature, openTileInfo) {
+		let zoomAndOpen = function(e){
+			zoomToFeature(e);
+			openTileInfo(e);
+		}
         return function (feature, layer) {
             layer.on({
                 mouseover: highlightFeature,
                 mouseout: resetHighlight,
-                click: zoomToFeature
+                click: zoomToFeature,
+				contextmenu: openTileInfo
             });
         }
     }
