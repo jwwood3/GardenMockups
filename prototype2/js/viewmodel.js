@@ -47,12 +47,12 @@ class ViewModel {
                 topicDropdown.removeChild(topicDropdown.firstChild);
             }
             let placeholder = document.createElement("option");
-            placeholder.value = "";
+            placeholder.value = "TEMP";
             placeholder.innerHTML = "---Topic---";
             topicDropdown.appendChild(placeholder);
             for(var t in this.model.TOPICS){
                 let opt = document.createElement("option");
-                opt.value = this.model.TOPICS[t];
+                opt.value = "";
                 opt.innerHTML = t;
                 topicDropdown.appendChild(opt);
             }
@@ -60,28 +60,21 @@ class ViewModel {
         }
     }
 
-    async loadMeasures(uri,side){
+    async loadMeasures(topic,side){
         let measureDropdown = document.getElementById("measureSel"+side)
         while(measureDropdown.firstChild){
             measureDropdown.removeChild(measureDropdown.firstChild)
         }
         let placeholder = document.createElement("option")
-        placeholder.value = ""
-        //placeholder.innerHTML = "---Measure---"
+        placeholder.value = "TEMP"
+        placeholder.innerHTML = "---Measure---"
         measureDropdown.appendChild(placeholder)
-        console.log(uri)
-        await fetch("http://localhost:3000/data?ask=subs&iri="+uri)
-        .then((data)=>{
-            data.json().then((vars)=>{
-                for(var v of vars){
-                    let opt = document.createElement("option")
-                    opt.value = v.value
-                    this.getLabel(v).then((lab)=>{opt.innerHTML = lab;})
-                    measureDropdown.appendChild(opt)
-                }
-                placeholder.innerHTML = "---Measure---"
-            })
-        })
+        for(var t in this.model.TOPICS[topic]){
+            let opt = document.createElement("option")
+            opt.value = this.model.TOPICS[topic][t]
+            opt.innerHTML = t;
+            measureDropdown.appendChild(opt)
+        }
     }
 
     /**
@@ -96,14 +89,14 @@ class ViewModel {
         } else {
             document.getElementById("concMenu"+side).classList.add("disabled")
             document.getElementById("measureDiv"+side).classList.remove("disabled")
-            this.loadMeasures(choice.value,side)
+            this.loadMeasures(choice.innerHTML,side)
         }
     }
 
     handleMeasureMenu(inputEvent, side){
         let measureField = document.getElementById("measureSel"+side)
         let choice = measureField.selectedOptions[0]
-        if(choice.value!="" && choice.value in this.model.ontologyMap){
+        if(choice.value!="TEMP" && choice.value in this.model.ontologyMap){
             var success = 0
             for(var v of this.model.variableDesc){
                 if(v.includes(this.model.ontologyMap[choice.value])){

@@ -47,24 +47,68 @@ let LANG_pig = {
 let LANGS = {'en':LANG_en, 'pig':LANG_pig};
 
 // List of topics for the query panel linked to their ontology ID
-let TOPICS = {//'Contaminants':'Contaminants',// Contaminants are handled separately, so it doesn't have an ID
-				// Contaminants disabled currently until it can be validated through the database properly
-			  'Race or Ethnicity':'SRPDIO_2030021',
-		  	  'Age':'SRPDIO_2030006',
-		  	  'Minority Status':'SRPDIO_2030024',
-		  	  'Civilian Status':'SRPDIO_2030000',
-		  	  'Computer and Internet Access':'SRPDIO_2030003',
-		  	  'Disability Status':'SRPDIO_2030001',
-		  	  'Educational Status':'SRPDIO_2030002',
-		  	  'Employment Status':'SRPDIO_2030018',
-		  	  'Food Stamp or SNAP Status':'SRPDIO_2030013',
-		  	  'Grandparent Primary Care':'SRPDIO_2030008',
-		  	  'Groupd Quarters Type':'SRPDIO_2030010',
-		  	  'Health Insurance Coverage':'SRPDIO_2030014',
-		  	  'Housing Quality':'SRPDIO_2030009',
-		  	  'Income Quality':'SRPDIO_2030011',
-		  	  'Language Spoken':'SRPDIO_2030022',
-		  	  'Veteran Status':'SRPDIO_2030020'};
+let TOPICS = {
+    "Social Attributes":{
+        "Linguistically Isolated":"",
+        "Low Income":"",
+        "Minority Population":"",
+        "Less than Highschool Education":"",
+        "Under Age 5":"",
+        "Over Age 65":"",
+        "Poverty Status":""},
+    "Quality of Environment":{
+        "Concentrations of Metal(loid)s in Water":"",
+        "Concentrations of Metal(loid)s in Soil":"",
+        "Concentrations of Metal(loid)s in Plants":"",
+        "Concentrations of Metal(loid)s in Dust":"",
+        "Proximity to Sources of Pollution":"",
+        "Air Pollution":"",
+        "Ozone Level in Air":"",
+        "PM 2.5 in Air":"",
+        "Lead Paint Indicator":"",
+        "Water Quality":"",
+        "Soil Characteristics":"",
+        "Arsenic in Community Water Systems":"",
+        "Proximity of Population and Schools to Highways":""},
+    "Quality of Health":{
+        "Diabetes":"",
+        "Cancer":"",
+        "Asthma":"",
+        "Incidence of Cancer":"",
+        "Hospitalizations for Asthma":"",
+        "Emergency Department Visits for Asthma":"",
+        "Prevalence of Obesity or Severe Obesity Among Adults":""},
+    "Access to Food":{
+        "State Food Insecurity":""},
+    "Economic Capital":{
+        "Mortgage":"",
+        "Employment":"",
+        "Labor Force Status":""},
+    "Human Capital":{
+        "Educational Attainment":"",
+        "Healthcare Coverage":"",
+        "Presence of Computing Device":"",
+        "Internet Service/Subscription":"",
+        "Access to Women's Infants and Children Program":"",
+        "Access to Supplemental Nutrition Assistance Program":""},
+    "Political Capital":{
+        "Registered Voters":"",
+        "Ballots Casted":"",
+        "Access to Polling Places":""},
+    "Social Capital":{
+        "Number of Arizona Communities Participating in Gardenroots":"",
+        "Proximity to Grocery Stores":"",
+        "Store Availability":"",
+        "Food Assistance":"",
+        "Local Foods":"",
+        "Restaurants":"",
+        "Federally Qualified Health Center":"",
+        "Indian, Tribal, and Urban Indian Organizations":"",
+        "State Mental Hospital":"",
+        "Rural Health Clinic":"",
+        "Access to Parks and Elementary Schools":"",
+        "Land Use":""}
+};
 
 class Model {
     constructor(langId='en') {
