@@ -212,10 +212,6 @@ class Model {
         return null;
     }
 
-    getColor(key) {
-        console.log(key);
-    }
-
     setGeoJson(key, geojson) {
         this.geojsonInstances[key] = geojson;
     }
@@ -325,10 +321,9 @@ class Model {
                 if (!(tractId in tractData)) {
                     tractData[tractId] = [0, 0];
                 }
-                tractData[tractId][0] += value; // Current sum of values in the tract
-                tractData[tractId][1] += 1;     // Current num of values in the tract
+                tractData[tractId][0] += value; // Total of all values in the tract
+                tractData[tractId][1] += 1;     // How many values are in the tract
             }
-
         }
         this.tractDataMaps[key] = tractData;
     }
@@ -353,9 +348,28 @@ class Model {
                 max = avg;
             }
         }
+        if (min >= 0 && max <= 1){
+            this._handlePercentageData(key);
+        }
         return [min, max];
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Modify tract data in case of search variables that deal with percentages
+     * @param {*} key
+     */
+    _handlePercentageData(key) {
+        let tractMap = this.tractDataMaps[key];
+        for (var tractId in tractMap) {
+            let avg = tractMap[tractId][0] / tractMap[tractId][1];
+            tractMap[tractId][0] = avg;
+        }
+        this.tractDataMaps[key] = tractMap;
+    }
+
+>>>>>>> d0daffb (update percentage search var + UI fixes)
 	/**
 	* Returns an object containing the keys and values
 	* from the query string in the url

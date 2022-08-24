@@ -465,72 +465,44 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 			</div>
 			<div class="modal-body">
-				<div><span style="font-weight: bold">Data variable selected: </span><span id="varSelected1"></span></div>
+				<div><span style="font-weight: bold">Data variable selected: </span><span id="varSelected"></span></div>
 				<br>
 				<p class="exportText">1) Select if you want your map, graph, and/or table selection to be exported. Your current view will be automatically selected.</p>
 				<p class="exportText">2) Then, click the check boxes for the format(s) you would like to download - PNG, CSV, and/or PDF.</p>
 				<p class="exportText">3) Click download to download your selection.</p>
-				<div>
-					<div id="exportContent">
-						<div id="exportMap">
-							<div class="exportChoice">
-								<input type="checkbox" name="exportOption" value="exportOption">
-								<p class="exportText">MAP</p>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="mapPNG" name="option" value="mapPNG"></div>
-								<div><img class="exportIcon" src="export icons-01.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="mapCSV" name="option" value="mapCSV"></div>
-								<div><img class="exportIcon" src="export icons-02.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="mapPDF" name="option" value="mapPDF"></div>
-								<div><img class="exportIcon" src="export icons-03.svg"></div>
-							</div>
+				<form id="exportForm">
+					<div class="exportSection">
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="viewOption" id="map" value="map">
+							<label class="form-check-label exportText" for="map">MAP</label>
 						</div>
-						<div id="exportGraph">
-							<div class="exportChoice">
-								<input type="checkbox" name="exportOption" value="exportOption">
-								<p class="exportText">GRAPH</p>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="graphPNG" name="option" value="graphPNG"></div>
-								<div><img class="exportIcon" src="export icons-01.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="graphCSV" name="option" value="graphCSV"></div>
-								<div><img class="exportIcon" src="export icons-02.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="tablePDF" name="option" value="tablePDF"></div>
-								<div><img class="exportIcon" src="export icons-03.svg"></div>
-							</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="viewOption" id="graph" value="graph">
+							<label class="form-check-label exportText" for="graph">GRAPH</label>
 						</div>
-						<div id="exportTable">
-							<div class="exportChoice">
-								<input type="checkbox" name="exportOption" value="exportOption">
-								<p class="exportText">TABLE</p>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="tablePNG" name="option" value="tablePNG"></div>
-								<div><img class="exportIcon" src="export icons-01.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="tableCSV" name="option" value="tableCSV"></div>
-								<div><img class="exportIcon" src="export icons-02.svg"></div>
-							</div>
-							<div class="exportOption">
-								<div><input type="checkbox" id="tablePDF" name="option" value="tablePDF"></div>
-								<div><img class="exportIcon" src="export icons-03.svg"></div>
-							</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="viewOption" id="table" value="table">
+							<label class="form-check-label exportText" for="table">TABLE</label>
 						</div>
 					</div>
-					<div id="exportBtn">
-						<button type="submit" id="exportButton"> DOWNLOAD </button>
+
+					<div class="exportSection">
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="formatOption" id="png" value="png">
+							<label class="form-check-label" for="png"><img class="exportIcon" src="export icons-01.svg"></label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="formatOption" id="csv" value="csv">
+							<label class="form-check-label" for="csv"><img class="exportIcon" src="export icons-02.svg"></label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="formatOption" id="pdf" value="pdf">
+							<label class="form-check-label" for="pdf"><img class="exportIcon" src="export icons-03.svg"></label>
+						</div>
 					</div>
-				</div>
+
+					<div class="exportSection"><button type="submit" id="exportModalBtn"> DOWNLOAD </button></div>
+				</form>
 			</div>
 		</div>
 	</div>

@@ -12,6 +12,7 @@ class ViewModel {
         this.selectedData = {};
         this.var1 = "";
         this.var2 = "";
+        this.exportMap = "map1";
         try {
             // I'm triggering a custom event here to notify the view when the variables have been successfully fetched.
             // We have to wait for this to happen before making data requests
@@ -222,21 +223,73 @@ class ViewModel {
         });
     }
 
-
     /**
-    * Creates the export modal pop-up
-    *
-    * @param {*} modalId The id of the div that the pop-up modal will attach to
+    * Set the current map to be exported
     */
-    loadExportModal(modalId) {
-        if (modalId == "modal1"){
-            document.getElementById("varSelected1").innerHTML = this.var1;
-        }else{
-            document.getElementById("varSelected2").innerHTML = this.var2;
+    setExport(key) {
+        this.exportMap = key;
+        let exportVarDiv = document.getElementById("varSelected");
+        if (key === "map1"){
+            exportVarDiv.innerHTML = this.var1;
+        } else{
+            exportVarDiv.innerHTML = this.var2;
         }
     }
 
+    /**
+    * Handles export based on chosen format and view
+    */
+    handleExport(props) {
+        const format = props["formatOption"];
+        const view = props["viewOption"];
+        if (view === "map"){
+            this.handleExportMap(format, this.exportMap);
+        } else if (view == "graph"){
+            this.handleExportGraph(format, this.exportMap);
+        } else if (view == "table"){
+            this.handleExportTable(format, this.exportMap);
+        }
+    }
 
+    /**
+    * Exporting map view
+    */
+    handleExportMap(format, key){
+        if (format === "png"){
+            /* TO DO */
+        } else if (format === "csv"){
+            this.downloadBlockData(key);
+        } else if (format === "pdf"){
+            /* TO DO */
+        }
+    }
+
+    /**
+    * Exporting graph view
+    */
+    handleExportGraph(format, key){
+        if (format === "png"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        } else if (format === "csv"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        } else if (format === "pdf"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        }
+    }
+
+    /**
+    * Exporting table view
+    */
+    handleExportTable(format, key){
+        if (format === "png"){
+            /* TO DO */
+        } else if (format === "csv"){
+            this.downloadTableData(key);
+        } else if (format === "pdf"){
+            /* TO DO */
+        }
+    }
+    
     /**
     *
     * Change the search button into a loading icon when clicked (only change when there is value in the search bar)
@@ -348,26 +401,6 @@ class ViewModel {
         hiddenElement.click();
     }
 
-	/**
-	* Downloads the appropriate map or table data depending on whether
-	* the map or table is currently in view
-	*/
-	downloadData(side){
-		if(side==1){
-			if(this.model.activeView[side-1]==0){
-				this.downloadBlockData("map1");
-			} else {
-				this.downloadTableData("map1");
-			}
-		} else {
-			if(this.model.activeView[side-1]==0){
-				this.downloadBlockData("map2");
-			} else {
-				this.downloadTableData("map2");
-			}
-		}
-	}
-
     /**
      * Populates the legend with the colormapping being used by the specified visualiztion
      *
@@ -394,20 +427,7 @@ class ViewModel {
         var maxCount = 0;
 		let cutoffs = {};
         for (let tractId in tractData) {
-			let num = tractData[tractId][0] / tractData[tractId][1];
-			let num2 = tractData[tractId][0];
-            let color = colorMapping(num);
-			if(color in cutoffs){
-				if(num2<cutoffs[color][0]){
-					cutoffs[color][0] = num2;
-				}
-				if(num2>cutoffs[color][1]){
-					cutoffs[color][1] = num2;
-				}
-			} else {
-				//cutoffs[color] = [tractData[tractId][0] / tractData[tractId][1],tractData[tractId][0] / tractData[tractId][1]];
-				cutoffs[color] = [tractData[tractId][0],tractData[tractId][0]];
-			}
+            let color = colorMapping(tractData[tractId][0] / tractData[tractId][1]);
             counts[color] += 1;
             if (maxCount < counts[color])
                 maxCount = counts[color];
@@ -831,7 +851,7 @@ class ViewModel {
         return function (feature) {
             let string = feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
             if (string in tractData) {
-                return colorMapping(tractData[string][0] / tractData[string][1]);
+                return colorMapping(tractData[string][0]);
             }
             return 0;
         }
