@@ -448,7 +448,6 @@ class ViewModel {
         let minVal = this.model.limits[key][0]; 
         let maxVal = this.model.limits[key][1];
         let step = (maxVal - minVal) / colors.length;
-        console.log(minVal, maxVal, step);
 
         let width = (legendWidth - 20) / 8;
         for (var i = 0; i < colors.length; i++) {
