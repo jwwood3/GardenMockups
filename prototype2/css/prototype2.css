@@ -454,7 +454,7 @@ p {
 	margin-top: 10%;
 	position: absolute;
 	overflow: hidden;
-	left: 50%;
+	left: 49%;
 	top: 38%;
 	transform: translate(-50%,-50%);
 	z-index: 1000;
@@ -689,3 +689,4 @@ p.filterTypeLabel {
     margin: 0px;
     flex-grow: 2;
 }
+>>>>>>> f170577 (resolve conflict + UI fix)
