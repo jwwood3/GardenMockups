@@ -293,7 +293,7 @@ p {
 }
 
 .legendPanel {
-	z-index: 500;
+	z-index: 2222;
 	position: absolute;
 	left: 10px;
 	bottom: 60px;
@@ -447,16 +447,16 @@ p {
 .queryPanel {
 	background-color: #B6C6C2;
 	border-radius: 20px;
-	width: 100%;
+	width: 660px;
 	height: 450px;
 	margin: auto;
 	margin-top: 10%;
 	position: absolute;
 	overflow: hidden;
-	left: 50%;
+	left: 52%;
 	top: 38%;
 	transform: translate(-50%,-50%);
-	z-index: 1000;
+	z-index: 500;
 }
 
 .queryInfo {
