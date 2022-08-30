@@ -293,7 +293,7 @@ p {
 }
 
 .legendPanel {
-	z-index: 2222;
+	z-index: 500;
 	position: absolute;
 	left: 10px;
 	bottom: 60px;
@@ -453,10 +453,10 @@ p {
 	margin-top: 10%;
 	position: absolute;
 	overflow: hidden;
-	left: 52%;
+	left: 49%;
 	top: 38%;
 	transform: translate(-50%,-50%);
-	z-index: 500;
+	z-index: 1000;
 }
 
 .queryInfo {
