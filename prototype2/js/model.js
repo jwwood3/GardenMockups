@@ -355,8 +355,6 @@ class Model {
         return [min, max];
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Modify tract data in case of search variables that deal with percentages
      * @param {*} key
@@ -370,7 +368,6 @@ class Model {
         this.tractDataMaps[key] = tractMap;
     }
 
->>>>>>> d0daffb (update percentage search var + UI fixes)
 	/**
 	* Returns an object containing the keys and values
 	* from the query string in the url
