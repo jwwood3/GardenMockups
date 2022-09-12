@@ -105,14 +105,20 @@ document.addEventListener("DOMContentLoaded", function() {
 	   }
 	});
 
-
 	document.getElementById("DownloadButton1").addEventListener('click', function (event) {
-		viewModel.loadExportModal("modal1");
-	});
-	document.getElementById("DownloadButton2").addEventListener('click', function (event) {
-		viewModel.loadExportModal("modal2");
+		viewModel.setExport("map1");
 	});
 
+	document.getElementById("DownloadButton2").addEventListener('click', function (event) {
+		viewModel.setExport("map2");
+	});
+
+	document.getElementById("exportForm").addEventListener('submit', function (event) {
+		event.preventDefault();
+		const formData = new FormData(event.target);
+  	const formProps = Object.fromEntries(formData);
+		viewModel.handleExport(formProps);
+	});
 
 	for( const el of document.getElementsByClassName("ShareButton")){
 		el.addEventListener('click', (event) => {

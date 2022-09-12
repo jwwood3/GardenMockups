@@ -88,6 +88,7 @@ class Model {
 		this.isSetByCode = false; // This should toggle to determine if an event is triggered by the map or by the code
         this.ontologyMap = {}; //Store every valid ontologyId mapped to its variable name from the database
 		this.TOPICS = TOPICS;// List of topics for the query panel linked to their ontology ID
+        this.limits = {}; // Map of the minimum and maximum values for each map after its tract data is fetched
 	}
 
     /**
@@ -196,9 +197,8 @@ class Model {
     }
 
     getColorMapping(colors, key) {
-        let minmax = this._getMinMax(key);
-        let min = minmax[0];
-        let max = minmax[1];
+        let min = this.limits[key][0];
+        let max = this.limits[key][1];
         let diff = max - min;
         return function (d) {
             return (d < max) ? colors[Math.floor((d - min) * 8.0 / diff)] : colors[colors.length - 1];
@@ -210,10 +210,6 @@ class Model {
             return this.geojsonInstances[key];
         }
         return null;
-    }
-
-    getColor(key) {
-        console.log(key);
     }
 
     setGeoJson(key, geojson) {
@@ -325,19 +321,19 @@ class Model {
                 if (!(tractId in tractData)) {
                     tractData[tractId] = [0, 0];
                 }
-                tractData[tractId][0] += value; // Current sum of values in the tract
-                tractData[tractId][1] += 1;     // Current num of values in the tract
+                tractData[tractId][0] += value; // Total of all values in the tract
+                tractData[tractId][1] += 1;     // How many values are in the tract
             }
-
         }
         this.tractDataMaps[key] = tractData;
+        this.limits[key] = this.getMinMax(key);
     }
 
     /**
      * Gets the minimum and maximum data values from the tractMap under the specified key.
      * @param {*} key
      */
-    _getMinMax(key) {
+    getMinMax(key) {
         if (!(key in this.tractDataMaps)) {
             return [-1, -1];
         }
@@ -353,7 +349,23 @@ class Model {
                 max = avg;
             }
         }
+        if (min >= 0 && max <= 1){
+            this._handlePercentageData(key);
+        }
         return [min, max];
+    }
+
+    /**
+     * Modify tract data in case of search variables that deal with percentages
+     * @param {*} key
+     */
+    _handlePercentageData(key) {
+        let tractMap = this.tractDataMaps[key];
+        for (var tractId in tractMap) {
+            let avg = tractMap[tractId][0] / tractMap[tractId][1];
+            tractMap[tractId][0] = avg;
+        }
+        this.tractDataMaps[key] = tractMap;
     }
 
 	/**

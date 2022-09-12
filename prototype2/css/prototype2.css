@@ -31,6 +31,7 @@ p {
 	padding: 5px;
 	width: 100%;
 	background-color: #9A2C44;
+	z-index: 1050;
 }
 
 .subBar {
@@ -215,7 +216,7 @@ p {
 	border: solid 2px #3E3C3A;
 	border-radius: 20px;
 	overflow: hidden;
-	z-index: 1000;
+	z-index: 500;
 }
 
 #langSelect {
@@ -230,7 +231,7 @@ p {
 }
 
 #legend1, #legend2 {
-	z-index: 2222;
+	z-index: 500;
 	margin: auto;
 	display: flex;
 	flex-direction: row;
@@ -264,7 +265,7 @@ p {
 	transform: translate(-50%,50%);
 	width: 60%;
 	height: 50%;
-	z-index: 1000;
+	z-index: 500;
 	display: block;
 	background-color: #D3DEDE;
 	border: solid 2px #3E3C3A;
@@ -292,7 +293,7 @@ p {
 }
 
 .legendPanel {
-	z-index: 2222;
+	z-index: 500;
 	position: absolute;
 	left: 10px;
 	bottom: 60px;
@@ -366,17 +367,11 @@ p {
 	font-style: italic;
 }
 
-#exportContent{
-	margin-bottom: 10%;
-}
-
-.exportOption{
-	display: inline-block;
-}
-
-#exportMap, #exportGraph, #exportTable{
-	display: inline-block;
-	margin-right: 5%;
+.exportSection{
+	display: flex;
+	max-width: 100%;
+	justify-content: center;
+	margin: 5%;
 }
 
 .exportText{
@@ -390,12 +385,7 @@ p {
 	align-self: center;
 }
 
-#exportBtn{
-	display: flex;
-	justify-content: center;
-}
-
-#exportButton{
+#exportModalBtn{
 	height: 40px;
 	width: 300px;
 	background-color: #E35F59;
@@ -457,16 +447,16 @@ p {
 .queryPanel {
 	background-color: #B6C6C2;
 	border-radius: 20px;
-	width: 660px;
+	width: 100%;
 	height: 450px;
 	margin: auto;
 	margin-top: 10%;
 	position: absolute;
 	overflow: hidden;
-	left: 52%;
+	left: 50%;
 	top: 38%;
 	transform: translate(-50%,-50%);
-	z-index: 500;
+	z-index: 1000;
 }
 
 .queryInfo {

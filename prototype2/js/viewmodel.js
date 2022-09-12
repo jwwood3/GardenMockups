@@ -12,6 +12,7 @@ class ViewModel {
         this.selectedData = {};
         this.var1 = "";
         this.var2 = "";
+        this.exportMap = "map1";
         try {
             // I'm triggering a custom event here to notify the view when the variables have been successfully fetched.
             // We have to wait for this to happen before making data requests
@@ -222,21 +223,73 @@ class ViewModel {
         });
     }
 
-
     /**
-    * Creates the export modal pop-up
-    *
-    * @param {*} modalId The id of the div that the pop-up modal will attach to
+    * Set the current map to be exported
     */
-    loadExportModal(modalId) {
-        if (modalId == "modal1"){
-            document.getElementById("varSelected1").innerHTML = this.var1;
-        }else{
-            document.getElementById("varSelected2").innerHTML = this.var2;
+    setExport(key) {
+        this.exportMap = key;
+        let exportVarDiv = document.getElementById("varSelected");
+        if (key === "map1"){
+            exportVarDiv.innerHTML = this.var1;
+        } else{
+            exportVarDiv.innerHTML = this.var2;
         }
     }
 
+    /**
+    * Handles export based on chosen format and view
+    */
+    handleExport(props) {
+        const format = props["formatOption"];
+        const view = props["viewOption"];
+        if (view === "map"){
+            this.handleExportMap(format, this.exportMap);
+        } else if (view == "graph"){
+            this.handleExportGraph(format, this.exportMap);
+        } else if (view == "table"){
+            this.handleExportTable(format, this.exportMap);
+        }
+    }
 
+    /**
+    * Exporting map view
+    */
+    handleExportMap(format, key){
+        if (format === "png"){
+            /* TO DO */
+        } else if (format === "csv"){
+            this.downloadBlockData(key);
+        } else if (format === "pdf"){
+            /* TO DO */
+        }
+    }
+
+    /**
+    * Exporting graph view
+    */
+    handleExportGraph(format, key){
+        if (format === "png"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        } else if (format === "csv"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        } else if (format === "pdf"){
+            /* GRAPH NOT YET IMPLEMENTED */
+        }
+    }
+
+    /**
+    * Exporting table view
+    */
+    handleExportTable(format, key){
+        if (format === "png"){
+            /* TO DO */
+        } else if (format === "csv"){
+            this.downloadTableData(key);
+        } else if (format === "pdf"){
+            /* TO DO */
+        }
+    }
+    
     /**
     *
     * Change the search button into a loading icon when clicked (only change when there is value in the search bar)
@@ -348,25 +401,15 @@ class ViewModel {
         hiddenElement.click();
     }
 
-	/**
-	* Downloads the appropriate map or table data depending on whether
-	* the map or table is currently in view
-	*/
-	downloadData(side){
-		if(side==1){
-			if(this.model.activeView[side-1]==0){
-				this.downloadBlockData("map1");
-			} else {
-				this.downloadTableData("map1");
-			}
-		} else {
-			if(this.model.activeView[side-1]==0){
-				this.downloadBlockData("map2");
-			} else {
-				this.downloadTableData("map2");
-			}
-		}
-	}
+    /**
+     * Round numbers to a given decimal place. E.g, round(0.243432, 2) = 0.24
+     *
+     * @param {*} num The number being rounded
+     * @param {*} roundTo Where the number is being rounded to
+     */
+     round(num, roundTo) {
+        return Math.round((num + Number.EPSILON) * (10 ** roundTo)) / (10 ** roundTo);
+     }
 
     /**
      * Populates the legend with the colormapping being used by the specified visualiztion
@@ -392,22 +435,9 @@ class ViewModel {
         let tractData = this.model.getTractData(key);
         let colorMapping = this.model.getColorMapping(colors, key);
         var maxCount = 0;
-		let cutoffs = {};
         for (let tractId in tractData) {
-			let num = tractData[tractId][0] / tractData[tractId][1];
-			let num2 = tractData[tractId][0];
+			let num = tractData[tractId][0];
             let color = colorMapping(num);
-			if(color in cutoffs){
-				if(num2<cutoffs[color][0]){
-					cutoffs[color][0] = num2;
-				}
-				if(num2>cutoffs[color][1]){
-					cutoffs[color][1] = num2;
-				}
-			} else {
-				//cutoffs[color] = [tractData[tractId][0] / tractData[tractId][1],tractData[tractId][0] / tractData[tractId][1]];
-				cutoffs[color] = [tractData[tractId][0],tractData[tractId][0]];
-			}
             counts[color] += 1;
             if (maxCount < counts[color])
                 maxCount = counts[color];
@@ -415,22 +445,28 @@ class ViewModel {
 		while(legend.parentNode.children[0].children.length>1){
 			legend.parentNode.children[0].lastChild.remove();
 		}
-        var convertHeight = (count) => (count / maxCount) * legendHeight;
+        let minVal = this.model.limits[key][0]; 
+        let maxVal = this.model.limits[key][1];
+        let step = (maxVal - minVal) / colors.length;
+
         let width = (legendWidth - 20) / 8;
         for (var i = 0; i < colors.length; i++) {
-			if(colors[i] in cutoffs){
+			if(counts[colors[i]] > 0){
 				let lEntry = document.createElement("div");
 				lEntry.className = "legendEntry";
-				let colorSquare = document.createElement("div");
+				
+                let colorSquare = document.createElement("div");
 				colorSquare.style.width = width+"px";
 				colorSquare.style.height = width+"px";
 				colorSquare.style.background = colors[i];
 				colorSquare.className = "colorSquare";
-				let lLabel = document.createElement("span");
-				lLabel.className = "legendText";
-				let lowerBound = +(Math.round( cutoffs[colors[i]][0].toString() + "e+2")  + "e-2"); // round cutoff to 2 decimal places
-				let upperBound = +(Math.round( cutoffs[colors[i]][1].toString() + "e+2")  + "e-2"); // round cutoff to 2 decimal places
-				lLabel.innerHTML = lowerBound+" - "+upperBound;
+                
+                let lowerBound = this.round(minVal + step * i, 2);
+                let upperBound = (i < colors.length - 1) ? (this.round(minVal + step * (i + 1), 2)) : (this.round(maxVal,2));
+                
+                let lLabel = document.createElement("span");
+                lLabel.className = "legendText";
+                lLabel.innerHTML = lowerBound + " - " + upperBound;
 				lEntry.appendChild(colorSquare);
 				lEntry.appendChild(lLabel);
 				legend.parentNode.children[0].appendChild(lEntry);
@@ -831,7 +867,7 @@ class ViewModel {
         return function (feature) {
             let string = feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
             if (string in tractData) {
-                return colorMapping(tractData[string][0] / tractData[string][1]);
+                return colorMapping(tractData[string][0]);
             }
             return 0;
         }
@@ -854,7 +890,7 @@ class ViewModel {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 this._div.innerHTML = '<h6>'+this.m.LANG.DATA_VALUE+'</h6>' + (key in tractData ?
-                    '<b>' + tractData[key][0].toFixed(2) + ' ' + units
+                    '<b>' + (Math.round(((tractData[key][0]) + Number.EPSILON) * 100) / 100) + ' ' + units
                     : this.m.LANG.HOVER_TRACT);
             }
         };
