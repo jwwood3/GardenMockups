@@ -450,9 +450,6 @@ class ViewModel {
         let table = document.createElement("table");
         let row = document.createElement('tr');
         let head = document.createElement("thead");
-        this._addHeaderColumn(row, this.model.LANG.NAME_TABLE_LABEL);
-        this._addHeaderColumn(row, this.model.LANG.DESC_TABLE_LABEL);
-        this._addHeaderColumn(row, this.model.LANG.LOCATIONTYPE_TABLE_LABEL);
         this._addHeaderColumn(row, this.model.LANG.LOCATION_TABLE_LABEL);
         this._addHeaderColumn(row, this.model.LANG.VALUE_TABLE_LABEL);
         head.appendChild(row);
@@ -465,9 +462,10 @@ class ViewModel {
         container.appendChild(table);
 
         let dataTable = $(table).DataTable({
-            "language": {
-                "search": "Filter: "
-            }
+            "paging": false,
+            "info": false,
+            "scrollY": 400,
+            "searching": false
         });
         $('.dataTables_length').addClass('bs-select');
         return dataTable;
@@ -484,12 +482,11 @@ class ViewModel {
         // removing all rows in the DataTable
         table.rows().remove();
         let data = this.model.getOriginalData(key);
+        $(table.column(0).header()).text(data[0]['location_type']);
+        $(table.column(1).header()).text(data[0]['variable_desc']);
         for (let i = 0; i < data.length; i++) {
             table.row.add(
                 [
-                    data[i]['variable_name'],
-                    data[i]['variable_desc'],
-                    data[i]['location_type'],
                     data[i]['location_name'],
                     data[i]['value']
                 ]);
